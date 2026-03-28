@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>给宝贝的专属网站</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --pink: #ff6b9d;
+            --pink-light: #ffd6e4;
+            --pink-dark: #e91e63;
+            --blue: #74b9ff;
+            --yellow: #feca57;
+            --purple: #a29bfe;
+            --orange: #ff9f43;
+            --bg: linear-gradient(135deg, #fff5f7 0%, #fff0f5 50%, #f8f4ff 100%);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+        .hearts-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .heart { position: absolute; font-size: 20px; animation: float 15s infinite; opacity: 0.3; }
+        @keyframes float { 0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.3; } 90% { opacity: 0.3; } 100% { transform: translateY(-100px) rotate(720deg); opacity: 0; } }
+        .music-control { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; }
+        .music-btn { width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s; }
+        .music-btn:hover { transform: scale(1.1); }
+        .music-btn.playing { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); } 50% { box-shadow: 0 4px 25px rgba(255, 107, 157, 0.6); } }
+        .music-btn svg { width: 20px; height: 20px; fill: var(--pink); }
+        section { position: relative; z-index: 1; padding: 60px 20px; max-width: 600px; margin: 0 auto; }
+        .cover { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
+        .cover-avatar { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--purple)); display: flex; align-items: center; justify-content: center; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(255, 107, 157, 0.4); animation: breathe 3s ease-in-out infinite; }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .cover-avatar svg { width: 60px; height: 60px; fill: white; }
+        .cover h1 { font-size: 2.5rem; font-weight: 600; background: linear-gradient(135deg, var(--pink), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .cover-subtitle { font-size: 1.1rem; color: #888; margin-bottom: 40px; }
+        .scroll-hint { display: flex; flex-direction: column; align-items: center; gap: 8px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+        .scroll-hint span { font-size: 0.85rem; color: #aaa; }
+        .scroll-hint svg { width: 24px; height: 24px; fill: var(--pink); opacity: 0.6; }
+        .days-counter { background: linear-gradient(135deg, var(--pink), var(--pink-dark)); border-radius: 30px; padding: 40px 30px; text-align: center; color: white; box-shadow: 0 10px 40px rgba(255, 107, 157, 0.4); margin-bottom: 40px; }
+        .days-number { font-size: 5rem; font-weight: 700; line-height: 1; text-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .days-label { font-size: 1.2rem; opacity: 0.9; margin-top: 10px; }
+        .love-date { margin-top: 20px; font-size: 0.95rem; opacity: 0.85; }
+        .section-title { font-size: 1.5rem; font-weight: 600; color: var(--pink); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; width: 4px; height: 24px; background: linear-gradient(to bottom, var(--pink), var(--purple)); border-radius: 2px; }
+        .about-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 5px 30px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .about-card h3 { color: var(--pink); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .about-card h3 svg { width: 20px; height: 20px; fill: var(--pink); }
+        .about-card p { color: #666; line-height: 1.8; font-size: 0.95rem; }
+        .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .tag { background: linear-gradient(135deg, var(--pink-light), #fff); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: var(--pink-dark); }
+        .tag.blue { background: linear-gradient(135deg, #dfe6e9, #fff); color: #2d3436; }
+        .tag.yellow { background: linear-gradient(135deg, #fff9e6, #fff); color: #b7791f; }
+        .tag.purple { background: linear-gradient(135deg, #e8e4ff, #fff); color: #6c5ce7; }
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--pink), var(--purple), var(--blue)); border-radius: 1px; }
+        .timeline-item { position: relative; margin-bottom: 30px; }
+        .timeline-dot { position: absolute; left: -26px; top: 5px; width: 14px; height: 14px; background: white; border: 3px solid var(--pink); border-radius: 50%; }
+        .timeline-date { font-size: 0.8rem; color: var(--pink); font-weight: 500; margin-bottom: 5px; }
+        .timeline-title { font-size: 1rem; font-weight: 600; color: #333; margin-bottom: 5px; }
+        .timeline-desc { font-size: 0.85rem; color: #888; line-height: 1.5; }
+        .gift-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.06); transition: transform 0.3s; }
+        .gift-card:hover { transform: translateY(-3px); }
+        .gift-icon { width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .gift-icon.pink { background: linear-gradient(135deg, var(--pink-light), #fff); }
+        .gift-icon.blue { background: linear-gradient(135deg, #dfe6e9, #fff); }
+        .gift-icon.yellow { background: linear-gradient(135deg, #fff9e6, #fff); }
+        .gift-icon.purple { background: linear-gradient(135deg, #e8e4ff, #fff); }
+        .gift-icon svg { width: 26px; height: 26px; }
+        .gift-icon.pink svg { fill: var(--pink); }
+        .gift-icon.blue svg { fill: #74b9ff; }
+        .gift-icon.yellow svg { fill: #feca57; }
+        .gift-icon.purple svg { fill: #a29bfe; }
+        .gift-info h4 { font-size: 1rem; color: #333; margin-bottom: 5px; }
+        .gift-info p { font-size: 0.85rem; color: #888; }
+        .plan-card { background: linear-gradient(135deg, var(--blue), var(--purple)); color: white; border-radius: 20px; padding: 25px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; transition: transform 0.3s; }
+        .plan-card:hover { transform: scale(1.02); }
+        .plan-icon { width: 50px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .plan-icon svg { width: 26px; height: 26px; fill: white; }
+        .plan-info h4 { font-size: 1.05rem; margin-bottom: 5px; }
+        .plan-info p { font-size: 0.85rem; opacity: 0.85; }
+        .love-letter { background: linear-gradient(135deg, #fff5f7, #fff); border: 2px solid var(--pink-light); border-radius: 20px; padding: 30px 25px; text-align: center; }
+        .love-letter p { color: #666; line-height: 2; font-size: 1rem; margin-bottom: 15px; }
+        .love-letter .signature { color: var(--pink); font-weight: 500; margin-top: 20px; }
+        .footer { text-align: center; padding: 40px 20px; color: #aaa; font-size: 0.85rem; }
+        .footer-hearts { font-size: 1.5rem; margin-bottom: 10px; animation: heartbeat 1.5s infinite; }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        
+        /* ===== 3D CUTE CAT SECTION ===== */
+        .cat-section { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; perspective: 1000px; padding: 20px 0; }
+        .cat-game-container { width: 140px; height: 200px; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.3s ease; }
+        .cat-game-container:hover { transform: translateY(-10px) rotateX(5deg); }
+        .cat-body {
+            width: 120px; height: 160px; position: absolute; left: 50%; top: 50%;
+            transform: translate(-50%, -50%); border-radius: 50% 50% 45% 45%;
+            background: linear-gradient(145deg, #feca57, #ff9f43);
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1), inset 10px 10px 20px rgba(255,255,255,0.3), 0 20px 40px rgba(255,159,67,0.3);
+            animation: catBreathe 3s ease-in-out infinite; overflow: visible;
+        }
+        .cat-body.white-cat { background: linear-gradient(145deg, #ffffff, #f0f0f0); box-shadow: inset -10px -10px 20px rgba(0,0,0,0.05), inset 10px 10px 20px rgba(255,255,255,0.8), 0 20px 40px rgba(200,200,200,0.3); }
+        @keyframes catBreathe { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.03); } }
+        .cat-body::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: inherit; background: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.1) 3px, rgba(255,255,255,0.1) 6px); pointer-events: none; }
+        .cat-ear { position: absolute; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 35px solid #ff9f43; top: -20px; transition: transform 0.2s ease; }
+        .cat-ear.left { left: 10px; transform: rotate(-15deg); }
+        .cat-ear.right { right: 10px; transform: rotate(15deg); }
+        .cat-ear::after { content: ''; position: absolute; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 18px solid #ffb8b8; top: 8px; left: -10px; }
+        .white-cat .cat-ear { border-bottom-color: #e0e0e0; }
+        .white-cat .cat-ear::after { border-bottom-color: #ffb8b8; }
+        .cat-face { position: absolute; width: 80%; height: 60%; top: 25%; left: 10%; }
+        .cat-eyes { display: flex; justify-content: space-around; padding: 0 5px; margin-top: 20px; }
+        .cat-eye { width: 28px; height: 32px; background: linear-gradient(180deg, #2d3436 0%, #2d3436 60%, #a29bfe 60%); border-radius: 50%; position: relative; animation: catBlink 4s ease-in-out infinite; transition: all 0.2s ease; }
+        .cat-eye::before { content: ''; position: absolute; width: 10px; height: 12px; background: white; border-radius: 50%; top: 4px; left: 4px; }
+        .cat-eye::after { content: ''; position: absolute; width: 4px; height: 4px; background: white; border-radius: 50%; top: 10px; right: 6px; }
+        @keyframes catBlink { 0%, 45%, 55%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.1); } }
+        .cat-nose { width: 16px; height: 12px; background: linear-gradient(180deg, #ff7675, #ff6b6b); border-radius: 50% 50% 40% 40%; margin: 15px auto 0; position: relative; }
+        .cat-mouth { display: flex; justify-content: center; gap: 2px; margin-top: -2px; }
+        .cat-mouth-line { width: 12px; height: 10px; border: 2px solid #2d3436; border-top: none; border-radius: 0 0 50% 50%; background: transparent; }
+        .cat-mouth-line.left { border-right: none; border-radius: 0 0 0 50%; }
+        .cat-mouth-line.right { border-left: none; border-radius: 0 0 50% 0; }
+        .white-cat .cat-mouth-line { border-color: #636e72; }
+        .cat-whiskers { position: absolute; top: 55%; width: 100%; }
+        .whisker { position: absolute; width: 30px; height: 2px; background: linear-gradient(90deg, #2d3436, transparent); }
+        .whisker.left-1 { left: -20px; top: 0; transform: rotate(-10deg); }
+        .whisker.left-2 { left: -22px; top: 8px; transform: rotate(0deg); }
+        .whisker.left-3 { left: -20px; top: 16px; transform: rotate(10deg); }
+        .whisker.right-1 { right: -20px; top: 0; transform: rotate(10deg) scaleX(-1); }
+        .whisker.right-2 { right: -22px; top: 8px; transform: rotate(0deg) scaleX(-1); }
+        .whisker.right-3 { right: -20px; top: 16px; transform: rotate(-10deg) scaleX(-1); }
+        .white-cat .whisker { background: linear-gradient(90deg, #636e72, transparent); }
+        .cat-cheek { position: absolute; width: 20px; height: 12px; background: rgba(255,182,193,0.5); border-radius: 50%; top: 50%; }
+        .cat-cheek.left { left: 5px; }
+        .cat-cheek.right { right: 5px; }
+        .cat-paws { position: absolute; bottom: -5px; display: flex; gap: 30px; left: 50%; transform: translateX(-50%); }
+        .cat-paw { width: 25px; height: 15px; background: linear-gradient(180deg, #ff9f43, #feca57); border-radius: 50%; }
+        .white-cat .cat-paw { background: linear-gradient(180deg, #e0e0e0, #f0f0f0); }
+        .cat-tail { position: absolute; width: 60px; height: 20px; background: linear-gradient(90deg, #ff9f43, #feca57); border-radius: 10px 20px 20px 10px; right: -40px; top: 60%; transform-origin: left center; animation: tailWag 2s ease-in-out infinite; }
+        .white-cat .cat-tail { background: linear-gradient(90deg, #e0e0e0, #f0f0f0); }
+        @keyframes tailWag { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
+        .cat-name-tag { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+        .cat-name-tag .name { font-weight: 700; font-size: 1.1rem; color: #333; }
+        .cat-name-tag .desc { font-size: 0.75rem; color: #888; font-style: italic; }
+        .cat-game-container.biting .cat-eye { animation: none; transform: scaleY(0.3); }
+        .cat-game-container.biting .cat-ear.left { transform: rotate(-25deg); }
+        .cat-game-container.biting .cat-ear.right { transform: rotate(25deg); }
+        .cat-game-container.biting .cat-mouth-line { width: 20px; height: 15px; border-width: 3px; }
+        .bite-bubble { position: absolute; font-size: 1.5rem; animation: bubbleFloat 1s ease-out forwards; pointer-events: none; z-index: 100; }
+        @keyframes bubbleFloat { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-60px) scale(1.2); } }
+        .cat-game-container::after { content: '👆 戳我!'; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: var(--pink); animation: bounce 1s infinite; white-space: nowrap; opacity: 0.8; }
+        .cat-game-container:hover::after { content: '😾 咬你!'; }
+        .hit-effect { position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 50%; border: 4px solid var(--pink); animation: hitRipple 0.5s ease-out forwards; pointer-events: none; }
+        @keyframes hitRipple { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        
+        .audio-player { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.08); }
+        .audio-cover { width: 60px; height: 60px; border-radius: 15px; background: linear-gradient(135deg, var(--pink), var(--purple)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .audio-cover svg { width: 30px; height: 30px; fill: white; }
+        .audio-info { flex: 1; min-width: 0; }
+        .audio-title { font-weight: 600; color: #333; font-size: 0.95rem; margin-bottom: 3px; }
+        .audio-singer { font-size: 0.8rem; color: #888; }
+        .audio-btn { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-dark)); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s; }
+        .audio-btn:hover { transform: scale(1.1); }
+        .audio-btn svg { width: 18px; height: 18px; fill: white; margin-left: 2px; }
+        .audio-btn.playing svg { margin-left: 0; }
+        
+        @media (max-width: 480px) {
+            .cover h1 { font-size: 2rem; }
+            .days-number { font-size: 4rem; }
+            section { padding: 50px 15px; }
+            .cat-game-container { width: 110px; height: 160px; }
+            .cat-body { width: 95px; height: 125px; }
+            .cat-ear { border-left-width: 15px; border-right-width: 15px; border-bottom-width: 28px; }
+            .cat-eye { width: 22px; height: 26px; }
+            .cat-name-tag .name { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <div class="music-control">
+        <button class="music-btn" id="bgMusicBtn" onclick="toggleBgMusic()">
+            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+        </button>
+        <button class="music-btn" id="oldBoyBtn" onclick="toggleOldBoy()">
+            <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+        </button>
+    </div>
+
+    <section class="cover">
+        <div class="cover-avatar">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+        <h1>Hi，宝宝</h1>
+        <p class="cover-subtitle">这里是我们的小世界</p>
+        <div class="scroll-hint">
+            <span>向下滑动</span>
+            <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        </div>
+    </section>
+
+    <section>
+        <div class="days-counter">
+            <div class="days-number" id="daysCount">0</div>
+            <div class="days-label">我们的故事正式启程</div>
+            <div class="love-date">从 2026.02.11 开始</div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">关于宝宝</div>
+
+        <div class="about-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>基本信息</h3>
+            <p>口腔医院护士小姐姐，24岁，射手座</p>
+            <p>工作认真负责，待人温柔体贴～</p>
+            <div class="tag-list">
+                <span class="tag blue">属蛇</span>
+                <span class="tag">有点小近视</span>
+                <span class="tag blue">37码小脚</span>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05l-5 2V1h-2v8l-5-2 1.63 10.48c.1.82.79 1.46 1.63 1.46h1.66l.32-3.15h5.52l.32 3.15zM9 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h4c.55 0 1-.45 1-1V4z"/></svg>最爱的美食 🍜</h3>
+            <div class="tag-list">
+                <span class="tag">剁椒鱼头</span>
+                <span class="tag">鲜虾</span>
+                <span class="tag">肥肠</span>
+                <span class="tag">烤蘑菇</span>
+                <span class="tag">臭豆腐</span>
+                <span class="tag">柠檬鸡爪</span>
+                <span class="tag yellow">卤味鸭</span>
+                <span class="tag purple">荷兰豆</span>
+				<span class="tag">还有很多</span>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg>零食水果 🍰</h3>
+            <div class="tag-list">
+                <span class="tag">掌心脆</span>
+                <span class="tag yellow">核桃瓜子</span>
+                <span class="tag">魔芋爽</span>
+                <span class="tag purple">王老吉</span>
+                <span class="tag blue">杨桃</span>
+                <span class="tag">青苹果</span>
+                <span class="tag blue">哈密瓜</span>
+                <span class="tag yellow">车厘子</span>
+                <span class="tag">榴莲</span>
+                <span class="tag">菠萝蜜</span>
+                <span class="tag">还有很多</span>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M4.5 9.5C5.88 9.5 7 8.38 7 7S5.88 4.5 4.5 4.5 2 5.62 2 7s1.12 2.5 2.5 2.5zM20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg>家里的小可爱们 🐱</h3>
+            <div class="cat-section">
+                <div class="cat-game-container" id="cat1" onclick="catBite(this, '蛋黄')">
+                    <div class="cat-body">
+                        <div class="cat-ear left"></div>
+                        <div class="cat-ear right"></div>
+                        <div class="cat-face">
+                            <div class="cat-eyes"><div class="cat-eye"></div><div class="cat-eye"></div></div>
+                            <div class="cat-nose"></div>
+                            <div class="cat-mouth"><div class="cat-mouth-line left"></div><div class="cat-mouth-line right"></div></div>
+                            <div class="cat-whiskers">
+                                <div class="whisker left-1"></div><div class="whisker left-2"></div><div class="whisker left-3"></div>
+                                <div class="whisker right-1"></div><div class="whisker right-2"></div><div class="whisker right-3"></div>
+                            </div>
+                            <div class="cat-cheek left"></div><div class="cat-cheek right"></div>
+                        </div>
+                        <div class="cat-paws"><div class="cat-paw"></div><div class="cat-paw"></div></div>
+                        <div class="cat-tail"></div>
+                    </div>
+                    <div class="cat-name-tag"><div class="name">蛋黄</div><div class="desc">暖暖的大橘 ☀️</div></div>
+                </div>
+
+                <div class="cat-game-container" id="cat2" onclick="catBite(this, '多多')">
+                    <div class="cat-body">
+                        <div class="cat-ear left"></div>
+                        <div class="cat-ear right"></div>
+                        <div class="cat-face">
+                            <div class="cat-eyes"><div class="cat-eye"></div><div class="cat-eye"></div></div>
+                            <div class="cat-nose"></div>
+                            <div class="cat-mouth"><div class="cat-mouth-line left"></div><div class="cat-mouth-line right"></div></div>
+                            <div class="cat-whiskers">
+                                <div class="whisker left-1"></div><div class="whisker left-2"></div><div class="whisker left-3"></div>
+                                <div class="whisker right-1"></div><div class="whisker right-2"></div><div class="whisker right-3"></div>
+                            </div>
+                            <div class="cat-cheek left"></div><div class="cat-cheek right"></div>
+                        </div>
+                        <div class="cat-paws"><div class="cat-paw"></div><div class="cat-paw"></div></div>
+                        <div class="cat-tail"></div>
+                    </div>
+                    <div class="cat-name-tag"><div class="name">多多</div><div class="desc">粘人的小橘 💕</div></div>
+                </div>
+
+                <div class="cat-game-container white-cat" id="cat3" onclick="catBite(this, '面包')">
+                    <div class="cat-body white-cat">
+                        <div class="cat-ear left"></div>
+                        <div class="cat-ear right"></div>
+                        <div class="cat-face">
+                            <div class="cat-eyes"><div class="cat-eye"></div><div class="cat-eye"></div></div>
+                            <div class="cat-nose"></div>
+                            <div class="cat-mouth"><div class="cat-mouth-line left"></div><div class="cat-mouth-line right"></div></div>
+                            <div class="cat-whiskers">
+                                <div class="whisker left-1"></div><div class="whisker left-2"></div><div class="whisker left-3"></div>
+                                <div class="whisker right-1"></div><div class="whisker right-2"></div><div class="whisker right-3"></div>
+                            </div>
+                            <div class="cat-cheek left"></div><div class="cat-cheek right"></div>
+                        </div>
+                        <div class="cat-paws"><div class="cat-paw"></div><div class="cat-paw"></div></div>
+                        <div class="cat-tail"></div>
+                    </div>
+                    <div class="cat-name-tag"><div class="name">面包</div><div class="desc">没有荔枝的大家伙 👑</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>性格特点</h3>
+            <div class="tag-list">
+                <span class="tag pink">胆子大</span>
+                <span class="tag purple">爱玩刺激项目</span>
+                <span class="tag yellow">有点怕热</span>
+                <span class="tag blue">喜欢搞笑古装剧</span>
+                <span class="tag">喜欢有趣的人</span>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0 2 .9 2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z"/></svg>不太喜欢的食物</h3>
+            <p>花生酱、羊肉、折耳根、肠粉、酸萝卜、泡菜，更多</p>
+        </div>
+
+        <div class="about-card">
+            <h3><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>小提醒</h3>
+            <p>看电影或远距离出门时，记得提醒宝宝戴眼镜哦～ 👓</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">我们的轨迹</div>
+        <div class="timeline">
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2025.10.02</div><div class="timeline-title">初次相识 💫</div><div class="timeline-desc">牵手 app 相识，后加了微信</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2025.11.17</div><div class="timeline-title">初次见面 🤗</div><div class="timeline-desc">宝宝来惠城找朋友，送她回家</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2025.12.02</div><div class="timeline-title">珠海长隆 🐬</div><div class="timeline-desc">第一次一起出去旅行，海洋王国</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2025.12.29</div><div class="timeline-title">第一次来找我玩 🎮</div><div class="timeline-desc">天益城夹娃娃，吃了冯校长</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2026.01.01</div><div class="timeline-title">小径湾跨年 🎆</div><div class="timeline-desc">一起放烟花，迎接新的一年</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2026.01.26</div><div class="timeline-title">深圳曼格海鲜自助餐 🦐</div><div class="timeline-desc">早上一起去看腰，然后吃大餐</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2026.02.11</div><div class="timeline-title">正式在一起 💕</div><div class="timeline-desc">过了12点表白，也就是12号凌晨,都很勇敢</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2026.02.13</div><div class="timeline-title">第一个情人节 💝</div><div class="timeline-desc">半岛游玩，套圈、射击，蝴蝶银项链</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2026.02.22</div><div class="timeline-title">第一次去宝宝家 🏠</div><div class="timeline-desc">接宝宝回惠阳，直奔广州，第一次睡一张床</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2026.02.23-24</div><div class="timeline-title">广州长隆之旅 🎢</div><div class="timeline-desc">野生动物世界、欢乐世界，玩得超开心</div></div>
+            <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">2026.03.23</div><div class="timeline-title">第一次一起住家里 🏡</div><div class="timeline-desc">温馨甜蜜的一晚</div></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">礼物</div>
+        <div class="gift-card"><div class="gift-icon pink"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg></div><div class="gift-info"><h4>生日礼物 - 小米饮水机 💧</h4><p>希望宝宝时刻想起我</p></div></div>
+        <div class="gift-card"><div class="gift-icon pink"><svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"/></svg></div><div class="gift-info"><h4>生日礼物 - 粉色徕芬吹风机 💨</h4><p>再次准备的礼物，使用的频率更高了</p></div></div>
+        <div class="gift-card"><div class="gift-icon yellow"><svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg></div><div class="gift-info"><h4>情人节 - 疯狂动物城玩偶 🦊</h4><p>正式表白时送给宝宝的第一份礼物</p></div></div>
+        <div class="gift-card"><div class="gift-icon purple"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div><div class="gift-info"><h4>情人节 - 蝴蝶银项链 🦋</h4><p>希望宝宝快乐自由，第一个情人节礼物</p></div></div>
+    </section>
+
+    <section>
+        <div class="section-title">未来计划</div>
+        <div class="plan-card"><div class="plan-icon"><svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg></div><div class="plan-info"><h4>煮小龙虾 🐠</h4><p>亲手煮小龙虾，大概4月份</p></div></div>
+        <div class="plan-card"><div class="plan-icon"><svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg></div><div class="plan-info"><h4>深圳欢乐谷 🎢</h4><p>一起去玩刺激项目</p></div></div>
+        <div class="plan-card"><div class="plan-icon"><svg viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg></div><div class="plan-info"><h4>清远漂流 🌊</h4><p>夏天一起去玩水</p></div></div>
+    </section>
+
+    <section>
+        <div class="section-title">音乐时光</div>
+        <div class="audio-player">
+            <div class="audio-cover"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+            <div class="audio-info"><div class="audio-title">巴黎23号 🎵</div><div class="audio-singer">左其铂 - 旅行之歌</div></div>
+            <button class="audio-btn" id="bgPlayBtn" onclick="toggleBgMusic()"><svg viewBox="0 0 24 24" id="bgPlayIcon"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+        </div>
+        <div class="audio-player">
+            <div class="audio-cover" style="background: linear-gradient(135deg, #667eea, #764ba2);"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+            <div class="audio-info"><div class="audio-title">老男孩 🎤</div><div class="audio-singer">筷子兄弟 - 唱给宝宝的第一首歌</div></div>
+            <button class="audio-btn" id="oldBoyPlayBtn" onclick="toggleOldBoy()"><svg viewBox="0 0 24 24" id="oldBoyIcon"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">给宝贝的话</div>
+        <div class="love-letter">
+            <p>遇见你，是我最幸运的事。</p>
+            <p>谢谢宝宝愿意牵起我的手，愿意和我一起走这些路。</p>
+            <p>不管未来有多少困难，我都希望和宝宝一起面对。</p>
+            <p>我会努力成为一个更好的人，配得上你。</p>
+            <p>谢谢你出现在我的生命里。</p>
+            <p class="signature">永远喜欢你的 💕</p>
+        </div>
+    </section>
+
+    <div class="footer">
+        <div class="footer-hearts">💕</div>
+        <p>我们的故事，还在继续...</p>
+    </div>
+
+    <!-- 巴黎23号: 优先本地文件，找不到用URL -->
+    <audio id="bgAudio" loop>
+        <source src="paris23.mp3" type="audio/mpeg">
+        <source src="https://music.163.com/song/media/outer/url?id=536622404.mp3" type="audio/mpeg">
+    </audio>
+    <!-- 老男孩: 优先本地文件，找不到用URL -->
+    <audio id="oldBoyAudio">
+        <source src="oldboy.mp3" type="audio/mpeg">
+        <source src="https://music.163.com/song/media/outer/url?id=27538262.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function updateDays() {
+            const startDate = new Date('2026-02-11');
+            const today = new Date();
+            const diffTime = today - startDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('daysCount').textContent = diffDays;
+        }
+        updateDays();
+
+        function createHearts() {
+            const container = document.getElementById('heartsBg');
+            const hearts = ['💕', '💗', '💖', '💝'];
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (15 + Math.random() * 10) + 's';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.fontSize = (15 + Math.random() * 15) + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // Cat Bite Game
+        const biteMessages = ['😾喵！', '😾别碰我！', '😾哼！', '😾咬你！', '😸舒服～', '😻再摸摸', '😽蹭蹭', '💕爱你'];
+        
+        function catBite(catEl, catName) {
+            catEl.classList.add('biting');
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bite-bubble';
+            bubble.textContent = biteMessages[Math.floor(Math.random() * biteMessages.length)];
+            bubble.style.left = '50%';
+            bubble.style.top = '30%';
+            catEl.appendChild(bubble);
+
+            const hit = document.createElement('div');
+            hit.className = 'hit-effect';
+            catEl.querySelector('.cat-body').appendChild(hit);
+
+            setTimeout(() => {
+                catEl.classList.remove('biting');
+                bubble.remove();
+                hit.remove();
+            }, 800);
+
+            catEl.style.animation = 'none';
+            catEl.offsetHeight;
+            catEl.style.animation = 'catJump 0.3s ease';
+        }
+
+        const style = document.createElement('style');
+        style.textContent = '@keyframes catJump { 0%, 100% { transform: translateY(0) rotateX(5deg); } 50% { transform: translateY(-15px) rotateX(-5deg); } }';
+        document.head.appendChild(style);
+
+        document.querySelectorAll('.cat-game-container').forEach(cat => {
+            cat.addEventListener('touchstart', function(e) { e.preventDefault(); catBite(this, ''); });
+        });
+
+        // Music Controls
+        const bgAudio = document.getElementById('bgAudio');
+        const oldBoyAudio = document.getElementById('oldBoyAudio');
+        let currentPlaying = null;
+        let bgUsingFallback = false;
+        let oldBoyUsingFallback = false;
+
+        // 检测本地文件是否可用，不可用则使用URL
+        function setupAudioFallback(audio, name, localSrc, urlSrc) {
+            audio.addEventListener('error', function() {
+                // 如果当前source加载失败，尝试下一个
+                if (audio.error.code === 4 || audio.currentSrc.includes(localSrc)) {
+                    // 本地文件不可用，使用URL
+                    audio.src = urlSrc;
+                    audio.load();
+                }
+            });
+            
+            // 超时检测：3秒内没加载好就切换URL
+            setTimeout(() => {
+                if (audio.readyState === 0 && !audio.paused) {
+                    audio.src = urlSrc;
+                    audio.load();
+                }
+            }, 3000);
+        }
+        
+        setupAudioFallback(bgAudio, '巴黎23号', 'paris23.mp3', 'https://music.163.com/song/media/outer/url?id=536622404.mp3');
+        setupAudioFallback(oldBoyAudio, '老男孩', 'oldboy.mp3', 'https://music.163.com/song/media/outer/url?id=27538262.mp3');
+
+        // Auto play 老男孩 when 巴黎23号 ends
+        bgAudio.addEventListener('ended', function() {
+            if (currentPlaying === 'bg') {
+                toggleBgMusic();
+                toggleOldBoy();
+            }
+        });
+
+        function toggleBgMusic() {
+            if (currentPlaying === 'oldBoy') {
+                oldBoyAudio.pause();
+                document.getElementById('oldBoyPlayBtn').classList.remove('playing');
+                document.getElementById('oldBoyIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+            }
+            if (bgAudio.paused) {
+                bgAudio.play().catch(() => {});
+                document.getElementById('bgMusicBtn').classList.add('playing');
+                document.getElementById('bgPlayBtn').classList.add('playing');
+                document.getElementById('bgPlayIcon').innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+                currentPlaying = 'bg';
+            } else {
+                bgAudio.pause();
+                document.getElementById('bgMusicBtn').classList.remove('playing');
+                document.getElementById('bgPlayBtn').classList.remove('playing');
+                document.getElementById('bgPlayIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+                currentPlaying = null;
+            }
+        }
+
+        function toggleOldBoy() {
+            if (currentPlaying === 'bg') {
+                bgAudio.pause();
+                document.getElementById('bgMusicBtn').classList.remove('playing');
+                document.getElementById('bgPlayBtn').classList.remove('playing');
+                document.getElementById('bgPlayIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+            }
+            if (oldBoyAudio.paused) {
+                oldBoyAudio.currentTime = 0;
+                oldBoyAudio.play().catch(() => {});
+                document.getElementById('oldBoyBtn').classList.add('playing');
+                document.getElementById('oldBoyPlayBtn').classList.add('playing');
+                document.getElementById('oldBoyIcon').innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+                currentPlaying = 'oldBoy';
+            } else {
+                oldBoyAudio.pause();
+                document.getElementById('oldBoyBtn').classList.remove('playing');
+                document.getElementById('oldBoyPlayBtn').classList.remove('playing');
+                document.getElementById('oldBoyIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+                currentPlaying = null;
+            }
+        }
+    </script>
+</body>
+</html>
