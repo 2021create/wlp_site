@@ -92,69 +92,182 @@
         .footer-hearts { font-size: 1.5rem; margin-bottom: 10px; animation: heartbeat 1.5s infinite; }
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
         
-        /* ===== 3D CUTE CAT SECTION ===== */
-        .cat-section { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; perspective: 1000px; padding: 20px 0; }
-        .cat-game-container { width: 140px; height: 200px; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.3s ease; }
-        .cat-game-container:hover { transform: translateY(-10px) rotateX(5deg); }
-        .cat-body {
-            width: 120px; height: 160px; position: absolute; left: 50%; top: 50%;
-            transform: translate(-50%, -50%); border-radius: 50% 50% 45% 45%;
-            background: linear-gradient(145deg, #feca57, #ff9f43);
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1), inset 10px 10px 20px rgba(255,255,255,0.3), 0 20px 40px rgba(255,159,67,0.3);
-            animation: catBreathe 3s ease-in-out infinite; overflow: visible;
+        /* ===== 3D FURRY CAT SECTION ===== */
+        .cat-section { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; perspective: 1200px; padding: 30px 0; }
+        
+        .cat-game-container {
+            width: 150px; height: 210px; position: relative; cursor: pointer;
+            transform-style: preserve-3d; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 20px 25px rgba(0,0,0,0.15));
         }
-        .cat-body.white-cat { background: linear-gradient(145deg, #ffffff, #f0f0f0); box-shadow: inset -10px -10px 20px rgba(0,0,0,0.05), inset 10px 10px 20px rgba(255,255,255,0.8), 0 20px 40px rgba(200,200,200,0.3); }
-        @keyframes catBreathe { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.03); } }
-        .cat-body::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: inherit; background: repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255,255,255,0.1) 3px, rgba(255,255,255,0.1) 6px); pointer-events: none; }
-        .cat-ear { position: absolute; width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 35px solid #ff9f43; top: -20px; transition: transform 0.2s ease; }
-        .cat-ear.left { left: 10px; transform: rotate(-15deg); }
-        .cat-ear.right { right: 10px; transform: rotate(15deg); }
-        .cat-ear::after { content: ''; position: absolute; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 18px solid #ffb8b8; top: 8px; left: -10px; }
-        .white-cat .cat-ear { border-bottom-color: #e0e0e0; }
+        .cat-game-container:hover { 
+            transform: translateY(-15px) rotateX(8deg) scale(1.05); 
+            filter: drop-shadow(0 30px 35px rgba(0,0,0,0.25));
+        }
+        .cat-game-container:active { transform: scale(0.95); }
+        
+        /* 3D Cat Body - 毛茸茸球体 */
+        .cat-body {
+            width: 130px; height: 140px; position: absolute; left: 50%; top: 45%;
+            transform: translate(-50%, -50%); border-radius: 50%;
+            background: radial-gradient(ellipse at 30% 30%, #ffd699 0%, #ffb347 30%, #ff9f43 70%, #e88a2e 100%);
+            box-shadow: 
+                inset -15px -15px 30px rgba(0,0,0,0.15),
+                inset 15px 15px 30px rgba(255,255,255,0.4),
+                0 15px 35px rgba(255,159,67,0.4),
+                0 5px 15px rgba(0,0,0,0.1);
+            animation: catBreathe 2.5s ease-in-out infinite; overflow: visible;
+            transition: all 0.3s ease;
+        }
+        .cat-body.white-cat { 
+            background: radial-gradient(ellipse at 30% 30%, #ffffff 0%, #f5f5f5 40%, #e8e8e8 80%, #d0d0d0 100%);
+            box-shadow: 
+                inset -15px -15px 30px rgba(0,0,0,0.05),
+                inset 15px 15px 30px rgba(255,255,255,0.8),
+                0 15px 35px rgba(200,200,200,0.4),
+                0 5px 15px rgba(0,0,0,0.05);
+        }
+        @keyframes catBreathe { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
+        
+        /* 毛发纹理层 */
+        .cat-body::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 1px, transparent 2px),
+                radial-gradient(circle at 40% 30%, rgba(255,255,255,0.2) 1px, transparent 2px),
+                radial-gradient(circle at 60% 25%, rgba(255,255,255,0.25) 1px, transparent 2px),
+                radial-gradient(circle at 80% 35%, rgba(255,255,255,0.2) 1px, transparent 2px),
+                radial-gradient(circle at 30% 50%, rgba(255,255,255,0.15) 1px, transparent 2px),
+                radial-gradient(circle at 70% 55%, rgba(255,255,255,0.2) 1px, transparent 2px);
+            pointer-events: none; opacity: 0.8;
+        }
+        
+        /* 3D 耳朵 */
+        .cat-ear { 
+            position: absolute; width: 0; height: 0; 
+            border-left: 22px solid transparent; border-right: 22px solid transparent; 
+            border-bottom: 38px solid #ff9f43; top: -15px; 
+            transition: all 0.2s ease;
+        }
+        .cat-ear.left { left: 12px; transform: rotate(-18deg); }
+        .cat-ear.right { right: 12px; transform: rotate(18deg); }
+        .cat-ear::after { 
+            content: ''; position: absolute; width: 0; height: 0; 
+            border-left: 12px solid transparent; border-right: 12px solid transparent; 
+            border-bottom: 20px solid #ffb8b8; top: 10px; left: -12px;
+        }
+        .white-cat .cat-ear { border-bottom-color: #e8e8e8; }
         .white-cat .cat-ear::after { border-bottom-color: #ffb8b8; }
-        .cat-face { position: absolute; width: 80%; height: 60%; top: 25%; left: 10%; }
-        .cat-eyes { display: flex; justify-content: space-around; padding: 0 5px; margin-top: 20px; }
-        .cat-eye { width: 28px; height: 32px; background: linear-gradient(180deg, #2d3436 0%, #2d3436 60%, #a29bfe 60%); border-radius: 50%; position: relative; animation: catBlink 4s ease-in-out infinite; transition: all 0.2s ease; }
-        .cat-eye::before { content: ''; position: absolute; width: 10px; height: 12px; background: white; border-radius: 50%; top: 4px; left: 4px; }
-        .cat-eye::after { content: ''; position: absolute; width: 4px; height: 4px; background: white; border-radius: 50%; top: 10px; right: 6px; }
+        
+        /* 3D 脸部 */
+        .cat-face { position: absolute; width: 85%; height: 65%; top: 22%; left: 7.5%; }
+        .cat-eyes { display: flex; justify-content: space-around; padding: 0 8px; margin-top: 18px; }
+        .cat-eye { 
+            width: 30px; height: 34px; 
+            background: radial-gradient(ellipse at 50% 40%, #3d3d3d 0%, #2d2d2d 60%, #1a1a1a 100%);
+            border-radius: 50%; position: relative; 
+            animation: catBlink 4s ease-in-out infinite; 
+            transition: all 0.2s ease;
+            box-shadow: inset 0 -3px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .cat-eye::before { 
+            content: ''; position: absolute; width: 12px; height: 14px; 
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            border-radius: 50%; top: 3px; left: 4px;
+            box-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+        .cat-eye::after { 
+            content: ''; position: absolute; width: 5px; height: 5px; 
+            background: white; border-radius: 50%; top: 8px; right: 5px;
+            box-shadow: 0 0 5px rgba(255,255,255,0.6);
+        }
         @keyframes catBlink { 0%, 45%, 55%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.1); } }
-        .cat-nose { width: 16px; height: 12px; background: linear-gradient(180deg, #ff7675, #ff6b6b); border-radius: 50% 50% 40% 40%; margin: 15px auto 0; position: relative; }
+        
+        /* 鼻子 */
+        .cat-nose { 
+            width: 14px; height: 10px; 
+            background: radial-gradient(ellipse at 50% 30%, #ff8a8a, #ff6b6b);
+            border-radius: 50% 50% 45% 45%; margin: 12px auto 0; position: relative;
+            box-shadow: 0 2px 4px rgba(255,107,107,0.3);
+        }
+        
+        /* 嘴巴 */
         .cat-mouth { display: flex; justify-content: center; gap: 2px; margin-top: -2px; }
-        .cat-mouth-line { width: 12px; height: 10px; border: 2px solid #2d3436; border-top: none; border-radius: 0 0 50% 50%; background: transparent; }
+        .cat-mouth-line { width: 14px; height: 12px; border: 2px solid #3d3d3d; border-top: none; border-radius: 0 0 50% 50%; background: transparent; }
         .cat-mouth-line.left { border-right: none; border-radius: 0 0 0 50%; }
         .cat-mouth-line.right { border-left: none; border-radius: 0 0 50% 0; }
-        .white-cat .cat-mouth-line { border-color: #636e72; }
-        .cat-whiskers { position: absolute; top: 55%; width: 100%; }
-        .whisker { position: absolute; width: 30px; height: 2px; background: linear-gradient(90deg, #2d3436, transparent); }
-        .whisker.left-1 { left: -20px; top: 0; transform: rotate(-10deg); }
-        .whisker.left-2 { left: -22px; top: 8px; transform: rotate(0deg); }
-        .whisker.left-3 { left: -20px; top: 16px; transform: rotate(10deg); }
-        .whisker.right-1 { right: -20px; top: 0; transform: rotate(10deg) scaleX(-1); }
-        .whisker.right-2 { right: -22px; top: 8px; transform: rotate(0deg) scaleX(-1); }
-        .whisker.right-3 { right: -20px; top: 16px; transform: rotate(-10deg) scaleX(-1); }
-        .white-cat .whisker { background: linear-gradient(90deg, #636e72, transparent); }
-        .cat-cheek { position: absolute; width: 20px; height: 12px; background: rgba(255,182,193,0.5); border-radius: 50%; top: 50%; }
-        .cat-cheek.left { left: 5px; }
-        .cat-cheek.right { right: 5px; }
-        .cat-paws { position: absolute; bottom: -5px; display: flex; gap: 30px; left: 50%; transform: translateX(-50%); }
-        .cat-paw { width: 25px; height: 15px; background: linear-gradient(180deg, #ff9f43, #feca57); border-radius: 50%; }
-        .white-cat .cat-paw { background: linear-gradient(180deg, #e0e0e0, #f0f0f0); }
-        .cat-tail { position: absolute; width: 60px; height: 20px; background: linear-gradient(90deg, #ff9f43, #feca57); border-radius: 10px 20px 20px 10px; right: -40px; top: 60%; transform-origin: left center; animation: tailWag 2s ease-in-out infinite; }
-        .white-cat .cat-tail { background: linear-gradient(90deg, #e0e0e0, #f0f0f0); }
-        @keyframes tailWag { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
-        .cat-name-tag { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
-        .cat-name-tag .name { font-weight: 700; font-size: 1.1rem; color: #333; }
-        .cat-name-tag .desc { font-size: 0.75rem; color: #888; font-style: italic; }
-        .cat-game-container.biting .cat-eye { animation: none; transform: scaleY(0.3); }
-        .cat-game-container.biting .cat-ear.left { transform: rotate(-25deg); }
-        .cat-game-container.biting .cat-ear.right { transform: rotate(25deg); }
-        .cat-game-container.biting .cat-mouth-line { width: 20px; height: 15px; border-width: 3px; }
-        .bite-bubble { position: absolute; font-size: 1.5rem; animation: bubbleFloat 1s ease-out forwards; pointer-events: none; z-index: 100; }
-        @keyframes bubbleFloat { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-60px) scale(1.2); } }
-        .cat-game-container::after { content: '👆 戳我!'; position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: var(--pink); animation: bounce 1s infinite; white-space: nowrap; opacity: 0.8; }
-        .cat-game-container:hover::after { content: '😾 咬你!'; }
-        .hit-effect { position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 50%; border: 4px solid var(--pink); animation: hitRipple 0.5s ease-out forwards; pointer-events: none; }
-        @keyframes hitRipple { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        .white-cat .cat-mouth-line { border-color: #555; }
+        
+        /* 腮红 */
+        .cat-cheek { 
+            position: absolute; width: 22px; height: 14px; 
+            background: radial-gradient(ellipse, rgba(255,150,150,0.6) 0%, rgba(255,182,193,0.3) 70%, transparent 100%);
+            border-radius: 50%; top: 48%;
+        }
+        .cat-cheek.left { left: 3px; }
+        .cat-cheek.right { right: 3px; }
+        
+        /* 胡须 */
+        .cat-whiskers { position: absolute; top: 52%; width: 100%; }
+        .whisker { position: absolute; width: 35px; height: 2px; background: linear-gradient(90deg, #4a4a4a, rgba(74,74,74,0.3)); border-radius: 2px; }
+        .whisker.left-1 { left: -25px; top: -2px; transform: rotate(-12deg); }
+        .whisker.left-2 { left: -27px; top: 6px; transform: rotate(0deg); }
+        .whisker.left-3 { left: -25px; top: 14px; transform: rotate(12deg); }
+        .whisker.right-1 { right: -25px; top: -2px; transform: rotate(12deg) scaleX(-1); }
+        .whisker.right-2 { right: -27px; top: 6px; transform: rotate(0deg) scaleX(-1); }
+        .whisker.right-3 { right: -25px; top: 14px; transform: rotate(-12deg) scaleX(-1); }
+        .white-cat .whisker { background: linear-gradient(90deg, #888, rgba(136,136,136,0.3)); }
+        
+        /* 爪子 */
+        .cat-paws { position: absolute; bottom: -8px; display: flex; gap: 35px; left: 50%; transform: translateX(-50%); }
+        .cat-paw { width: 28px; height: 16px; background: linear-gradient(180deg, #ff9f43, #feca57); border-radius: 50%; box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
+        .white-cat .cat-paw { background: linear-gradient(180deg, #e8e8e8, #f5f5f5); }
+        
+        /* 尾巴 */
+        .cat-tail { 
+            position: absolute; width: 70px; height: 22px; 
+            background: linear-gradient(90deg, #ff9f43, #feca57);
+            border-radius: 15px 25px 25px 15px; right: -50px; top: 55%; 
+            transform-origin: left center; 
+            animation: tailWag 1.8s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+        .cat-tail::after { 
+            content: ''; position: absolute; right: -5px; top: 3px;
+            width: 18px; height: 16px; background: #feca57; border-radius: 50%;
+        }
+        .white-cat .cat-tail { background: linear-gradient(90deg, #e8e8e8, #f5f5f5); }
+        .white-cat .cat-tail::after { background: #f5f5f5; }
+        @keyframes tailWag { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+        
+        /* 名字标签 */
+        .cat-name-tag { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+        .cat-name-tag .name { font-weight: 700; font-size: 1.15rem; color: #333; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        .cat-name-tag .desc { font-size: 0.78rem; color: #888; font-style: italic; }
+        
+        /* 咬人动画状态 */
+        .cat-game-container.biting .cat-eye { animation: none; transform: scaleY(0.2); }
+        .cat-game-container.biting .cat-ear.left { transform: rotate(-30deg) translateX(-3px); }
+        .cat-game-container.biting .cat-ear.right { transform: rotate(30deg) translateX(3px); }
+        .cat-game-container.biting .cat-mouth-line { width: 18px; height: 14px; border-width: 3px; }
+        .cat-game-container.biting .cat-tail { animation: none; transform: rotate(-30deg); }
+        .cat-game-container.biting .cat-body { transform: translate(-50%, -50%) scale(0.95); }
+        
+        /* 气泡 */
+        .bite-bubble { position: absolute; font-size: 1.6rem; animation: bubbleFloat 1s ease-out forwards; pointer-events: none; z-index: 100; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        @keyframes bubbleFloat { 0% { opacity: 1; transform: translateY(0) scale(0.5) rotate(0deg); } 50% { opacity: 1; transform: translateY(-30px) scale(1.1) rotate(5deg); } 100% { opacity: 0; transform: translateY(-70px) scale(1.2) rotate(-5deg); } }
+        
+        /* 提示文字 */
+        .cat-game-container::after { content: '👆 戳戳!'; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 0.75rem; color: var(--pink); animation: bounce 1.2s infinite; white-space: nowrap; opacity: 0.9; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        .cat-game-container:hover::after { content: '😾 咬你哟!'; }
+        
+        /* 点击波纹 */
+        .hit-effect { position: absolute; width: 100%; height: 100%; top: 0; left: 0; border-radius: 50%; border: 4px solid var(--pink); animation: hitRipple 0.6s ease-out forwards; pointer-events: none; }
+        @keyframes hitRipple { 0% { transform: scale(0.7); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+        
+        /* 心跳特效 */
+        .heart-burst { position: absolute; font-size: 1.2rem; animation: heartBurst 1s ease-out forwards; pointer-events: none; z-index: 100; }
+        @keyframes heartBurst { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 50% { opacity: 1; transform: translateY(-40px) scale(1.3); } 100% { opacity: 0; transform: translateY(-80px) scale(0.8); } }
         
         .audio-player { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.08); }
         .audio-cover { width: 60px; height: 60px; border-radius: 15px; background: linear-gradient(135deg, var(--pink), var(--purple)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -166,6 +279,106 @@
         .audio-btn:hover { transform: scale(1.1); }
         .audio-btn svg { width: 18px; height: 18px; fill: white; margin-left: 2px; }
         .audio-btn.playing svg { margin-left: 0; }
+        
+        /* ===== PAGE SNAKE GAME ===== */
+        .snake-trigger { cursor: pointer; transition: all 0.3s; }
+        .snake-trigger:hover { transform: scale(1.1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        
+        .page-snake-layer {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 9998; pointer-events: none; display: none;
+        }
+        .page-snake-layer.active { display: block; pointer-events: auto; }
+        
+        .page-snake-hud {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(255,255,255,0.95); padding: 10px 24px;
+            border-radius: 30px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 10000;
+        }
+        .page-snake-score {
+            font-size: 1.2rem; font-weight: 600; color: #333;
+        }
+        .page-snake-score span { color: var(--pink); font-size: 1.4rem; margin-left: 5px; }
+        .page-snake-btn {
+            background: var(--pink); color: white; border: none;
+            padding: 8px 16px; border-radius: 15px; font-size: 0.85rem;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .page-snake-btn:hover { background: var(--pink-dark); }
+        
+        /* 方向键控制器 */
+        .snake-dpad {
+            position: fixed; bottom: 30px; right: 30px;
+            display: none; grid-template-columns: repeat(3, 50px);
+            grid-template-rows: repeat(3, 50px);
+            gap: 5px; z-index: 10000;
+        }
+        .page-snake-layer.active .snake-dpad { display: grid; }
+        .snake-dpad > div {
+            background: rgba(255,255,255,0.9); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer; transition: all 0.15s;
+            user-select: none;
+        }
+        .snake-dpad > div:active {
+            transform: scale(0.9);
+            background: var(--pink);
+            color: white;
+        }
+        .dpad-center {
+            background: linear-gradient(135deg, #26de81, #20bf6b) !important;
+            color: white !important;
+            font-size: 1.8rem;
+        }
+        
+        /* 食物样式 */
+        .page-snake-food {
+            position: absolute; width: 30px; height: 30px;
+            font-size: 28px; text-align: center; line-height: 30px;
+            z-index: 9999; pointer-events: none;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+            animation: foodBounce 1s ease-in-out infinite;
+        }
+        @keyframes foodBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-5px) scale(1.1); }
+        }
+        
+        /* 蛇身体 */
+        .snake-segment {
+            position: absolute; border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+        }
+        .snake-head {
+            background: linear-gradient(135deg, #26de81, #20bf6b);
+            box-shadow: 0 0 15px rgba(38, 222, 129, 0.6);
+            z-index: 10000;
+        }
+        .snake-head::before, .snake-head::after {
+            content: ''; position: absolute;
+            background: white; border-radius: 50%;
+        }
+        .snake-head::before { width: 8px; height: 8px; top: 4px; left: 4px; }
+        .snake-head::after { width: 8px; height: 8px; top: 4px; right: 4px; }
+        
+        .snake-body-segment {
+            background: linear-gradient(135deg, #20bf6b, #26de81);
+            box-shadow: 0 0 10px rgba(38, 222, 129, 0.4);
+        }
+        
+        /* 蛇舌 */
+        .snake-tongue {
+            position: absolute; width: 12px; height: 4px;
+            background: #ff6b6b; border-radius: 2px;
+            animation: tongueFlick 0.3s ease-in-out infinite alternate;
+        }
+        @keyframes tongueFlick {
+            0% { transform: scaleX(1) rotate(-10deg); }
+            100% { transform: scaleX(1.3) rotate(10deg); }
+        }
         
         @media (max-width: 480px) {
             .cover h1 { font-size: 2rem; }
@@ -219,7 +432,7 @@
             <p>口腔医院护士小姐姐，24岁，射手座</p>
             <p>工作认真负责，待人温柔体贴～</p>
             <div class="tag-list">
-                <span class="tag blue">属蛇</span>
+                <span class="tag blue snake-trigger" onclick="startPageSnake()">属蛇 🐍</span>
                 <span class="tag">有点小近视</span>
                 <span class="tag blue">37码小脚</span>
             </div>
@@ -407,6 +620,25 @@
         <p>我们的故事，还在继续...</p>
     </div>
 
+    <!-- 贪吃蛇游戏层 -->
+        <!-- 贪吃蛇游戏层 - 覆盖整个页面 -->
+        <div class="page-snake-layer" id="pageSnakeLayer">
+            <div class="page-snake-hud" id="pageSnakeHud">
+                <div class="page-snake-score">🍬 长度 <span id="pageSnakeLength">3</span></div>
+                <button class="page-snake-btn" onclick="stopPageSnake()">结束游戏</button>
+            </div>
+            <!-- 方向键控制器 -->
+            <div class="snake-dpad" id="snakeDpad">
+                <div class="dpad-up" onclick="pageSnakeTurn('up')">▲</div>
+                <div class="dpad-left" onclick="pageSnakeTurn('left')">◀</div>
+                <div class="dpad-center">🐍</div>
+                <div class="dpad-right" onclick="pageSnakeTurn('right')">▶</div>
+                <div class="dpad-down" onclick="pageSnakeTurn('down')">▼</div>
+            </div>
+            <div class="page-snake-food" id="pageSnakeFood"></div>
+            <div class="page-snake-body" id="pageSnakeBody"></div>
+        </div>
+
     <!-- 巴黎23号: 优先本地文件，找不到用URL -->
     <audio id="bgAudio" loop>
         <source src="paris23.mp3" type="audio/mpeg">
@@ -444,40 +676,92 @@
         }
         createHearts();
 
-        // Cat Bite Game
-        const biteMessages = ['😾喵！', '😾别碰我！', '😾哼！', '😾咬你！', '😸舒服～', '😻再摸摸', '😽蹭蹭', '💕爱你'];
+        // ===== Cat Interactive Game =====
+        const biteMessages = ['😾喵！', '😾别碰我！', '😾哼！', '😾咬你！', '😸舒服～', '😻再摸摸', '😽蹭蹭', '💕爱你', '🐱喵呜', '😺嘿嘿'];
+        const loveMessages = ['💕', '💗', '💖', '❤️', '💝'];
         
+        let clickCount = 0;
         function catBite(catEl, catName) {
+            clickCount++;
             catEl.classList.add('biting');
             
+            // 随机表情气泡
             const bubble = document.createElement('div');
             bubble.className = 'bite-bubble';
-            bubble.textContent = biteMessages[Math.floor(Math.random() * biteMessages.length)];
-            bubble.style.left = '50%';
-            bubble.style.top = '30%';
+            const messages = clickCount % 5 === 0 ? loveMessages : biteMessages;
+            bubble.textContent = messages[Math.floor(Math.random() * messages.length)];
+            bubble.style.left = (30 + Math.random() * 40) + '%';
+            bubble.style.top = '15%';
             catEl.appendChild(bubble);
 
+            // 波纹效果
             const hit = document.createElement('div');
             hit.className = 'hit-effect';
             catEl.querySelector('.cat-body').appendChild(hit);
+
+            // 弹跳
+            catEl.style.animation = 'none';
+            catEl.offsetHeight;
+            catEl.style.animation = 'catJump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            
+            // 触发尾巴疯狂摇摆
+            const tail = catEl.querySelector('.cat-tail');
+            if(tail) {
+                tail.style.animation = 'none';
+                tail.offsetHeight;
+                tail.style.animation = 'tailWagFast 0.3s ease-in-out 3';
+            }
 
             setTimeout(() => {
                 catEl.classList.remove('biting');
                 bubble.remove();
                 hit.remove();
-            }, 800);
-
-            catEl.style.animation = 'none';
-            catEl.offsetHeight;
-            catEl.style.animation = 'catJump 0.3s ease';
+                catEl.style.animation = '';
+                if(tail) {
+                    tail.style.animation = 'tailWag 1.8s ease-in-out infinite';
+                }
+            }, 1200);
         }
 
+        // 添加快速尾巴动画
         const style = document.createElement('style');
-        style.textContent = '@keyframes catJump { 0%, 100% { transform: translateY(0) rotateX(5deg); } 50% { transform: translateY(-15px) rotateX(-5deg); } }';
+        style.textContent = `
+            @keyframes catJump { 
+                0% { transform: translateY(0) rotateX(5deg) scale(1); } 
+                30% { transform: translateY(-20px) rotateX(-5deg) scale(1.1); } 
+                50% { transform: translateY(-25px) rotateX(5deg) scale(1.05); } 
+                100% { transform: translateY(0) rotateX(5deg) scale(1); } 
+            }
+            @keyframes tailWagFast { 0%, 100% { transform: rotate(-30deg); } 50% { transform: rotate(30deg); } }
+        `;
         document.head.appendChild(style);
 
+        // 绑定点击和触摸事件
         document.querySelectorAll('.cat-game-container').forEach(cat => {
-            cat.addEventListener('touchstart', function(e) { e.preventDefault(); catBite(this, ''); });
+            cat.addEventListener('click', function(e) { 
+                e.preventDefault(); 
+                catBite(this, ''); 
+            });
+            cat.addEventListener('touchstart', function(e) { 
+                e.preventDefault(); 
+                catBite(this, ''); 
+            }, { passive: false });
+        });
+        
+        // 猫咪悬浮时的小动作
+        document.querySelectorAll('.cat-game-container').forEach(cat => {
+            cat.addEventListener('mouseenter', function() {
+                const ears = this.querySelectorAll('.cat-ear');
+                ears.forEach((ear, i) => {
+                    ear.style.transform = i === 0 ? 'rotate(-12deg) translateY(-2px)' : 'rotate(12deg) translateY(-2px)';
+                });
+            });
+            cat.addEventListener('mouseleave', function() {
+                const ears = this.querySelectorAll('.cat-ear');
+                ears.forEach((ear, i) => {
+                    ear.style.transform = i === 0 ? 'rotate(-18deg)' : 'rotate(18deg)';
+                });
+            });
         });
 
         // Music Controls
@@ -560,6 +844,265 @@
                 document.getElementById('oldBoyIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
                 currentPlaying = null;
             }
+        }
+
+        // ===== PAGE SNAKE GAME =====
+        const SNAKE_FOOD_EMOJIS = ['🍬', '🍭', '🍫', '🧁', '🍩', '🍪', '🍰', '🎂', '🍮', '🦴', '🐟'];
+        const SEGMENT_SIZE = 25;
+        
+        let pageSnakeRunning = false;
+        let pageSnake = [];
+        let pageSnakeDirection = { x: 1, y: 0 };
+        let pageSnakeNextDir = { x: 1, y: 0 };
+        let pageSnakeFoodPos = null;
+        let pageSnakeAnimFrame = null;
+        let pageSnakeLastMove = 0;
+        const SNAKE_MOVE_INTERVAL = 250; // 移动间隔ms，放慢
+        
+        function startPageSnake() {
+            const layer = document.getElementById('pageSnakeLayer');
+            layer.classList.add('active');
+            
+            // 重置方向显示
+            const hud = document.getElementById('pageSnakeHud');
+            const scoreEl = hud.querySelector('.page-snake-score');
+            scoreEl.innerHTML = '🍬 长度 <span id="pageSnakeLength">3</span>';
+            
+            // 初始化蛇在屏幕中央
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            pageSnake = [
+                { x: centerX, y: centerY },
+                { x: centerX - SEGMENT_SIZE, y: centerY },
+                { x: centerX - SEGMENT_SIZE * 2, y: centerY }
+            ];
+            
+            pageSnakeDirection = { x: 1, y: 0 };
+            pageSnakeNextDir = { x: 1, y: 0 };
+            
+            // 更新长度显示
+            document.getElementById('pageSnakeLength').textContent = pageSnake.length;
+            
+            // 生成食物
+            spawnPageSnakeFood();
+            
+            // 渲染蛇
+            renderPageSnake();
+            
+            // 开始游戏
+            pageSnakeRunning = true;
+            pageSnakeLastMove = Date.now();
+            
+            // 绑定控制（只绑定一次）
+            if (!window.pageSnakeControlsBound) {
+                bindPageSnakeControls();
+                window.pageSnakeControlsBound = true;
+            }
+            
+            // 开始游戏循环
+            gameLoop();
+        }
+        
+        function gameLoop() {
+            if (!pageSnakeRunning) return;
+            
+            const now = Date.now();
+            if (now - pageSnakeLastMove >= SNAKE_MOVE_INTERVAL) {
+                updatePageSnake();
+                pageSnakeLastMove = now;
+            }
+            
+            pageSnakeAnimFrame = requestAnimationFrame(gameLoop);
+        }
+        
+        // 方向键按钮控制
+        function pageSnakeTurn(dir) {
+            if (!pageSnakeRunning) return;
+            switch(dir) {
+                case 'up':
+                    if (pageSnakeDirection.y !== 1) pageSnakeNextDir = { x: 0, y: -1 };
+                    break;
+                case 'down':
+                    if (pageSnakeDirection.y !== -1) pageSnakeNextDir = { x: 0, y: 1 };
+                    break;
+                case 'left':
+                    if (pageSnakeDirection.x !== 1) pageSnakeNextDir = { x: -1, y: 0 };
+                    break;
+                case 'right':
+                    if (pageSnakeDirection.x !== -1) pageSnakeNextDir = { x: 1, y: 0 };
+                    break;
+            }
+        }
+        
+        function bindPageSnakeControls() {
+            // 键盘控制
+            document.addEventListener('keydown', (e) => {
+                if (!pageSnakeRunning) return;
+                switch(e.key) {
+                    case 'ArrowUp': case 'w': case 'W':
+                        if (pageSnakeDirection.y !== 1) pageSnakeNextDir = { x: 0, y: -1 }; break;
+                    case 'ArrowDown': case 's': case 'S':
+                        if (pageSnakeDirection.y !== -1) pageSnakeNextDir = { x: 0, y: 1 }; break;
+                    case 'ArrowLeft': case 'a': case 'A':
+                        if (pageSnakeDirection.x !== 1) pageSnakeNextDir = { x: -1, y: 0 }; break;
+                    case 'ArrowRight': case 'd': case 'D':
+                        if (pageSnakeDirection.x !== -1) pageSnakeNextDir = { x: 1, y: 0 }; break;
+                }
+            });
+        }
+        
+        function spawnPageSnakeFood() {
+            const margin = 80; // 边缘留白
+            const hudHeight = 100; // HUD高度留白
+            const dpadMargin = 200; // 右下角方向键留白
+            
+            pageSnakeFoodPos = {
+                x: margin + Math.random() * (window.innerWidth - margin * 2 - dpadMargin - 30),
+                y: hudHeight + Math.random() * (window.innerHeight - hudHeight - margin - 30),
+                emoji: SNAKE_FOOD_EMOJIS[Math.floor(Math.random() * SNAKE_FOOD_EMOJIS.length)]
+            };
+            
+            // 渲染食物
+            const foodEl = document.getElementById('pageSnakeFood');
+            foodEl.textContent = pageSnakeFoodPos.emoji;
+            foodEl.style.left = pageSnakeFoodPos.x + 'px';
+            foodEl.style.top = pageSnakeFoodPos.y + 'px';
+        }
+        
+        function updatePageSnake() {
+            if (!pageSnakeRunning) return;
+            
+            pageSnakeDirection = { ...pageSnakeNextDir };
+            
+            // 计算新头部位置
+            const head = pageSnake[0];
+            const newHead = {
+                x: head.x + pageSnakeDirection.x * SEGMENT_SIZE,
+                y: head.y + pageSnakeDirection.y * SEGMENT_SIZE
+            };
+            
+            // 边界检测
+            if (newHead.x < 0 || newHead.x > window.innerWidth - SEGMENT_SIZE ||
+                newHead.y < 0 || newHead.y > window.innerHeight - SEGMENT_SIZE) {
+                endPageSnake();
+                return;
+            }
+            
+            // 撞自己
+            for (let i = 0; i < pageSnake.length - 1; i++) {
+                if (Math.abs(pageSnake[i].x - newHead.x) < SEGMENT_SIZE * 0.7 &&
+                    Math.abs(pageSnake[i].y - newHead.y) < SEGMENT_SIZE * 0.7) {
+                    endPageSnake();
+                    return;
+                }
+            }
+            
+            pageSnake.unshift(newHead);
+            
+            // 检测是否吃到食物
+            const food = pageSnakeFoodPos;
+            if (food) {
+                const dist = Math.sqrt(
+                    Math.pow(newHead.x + SEGMENT_SIZE/2 - food.x - 15, 2) +
+                    Math.pow(newHead.y + SEGMENT_SIZE/2 - food.y - 15, 2)
+                );
+                
+                if (dist < SEGMENT_SIZE * 1.2) {
+                    // 吃到食物，不删除尾巴
+                    document.getElementById('pageSnakeLength').textContent = pageSnake.length;
+                    spawnPageSnakeFood();
+                } else {
+                    pageSnake.pop();
+                }
+            } else {
+                pageSnake.pop();
+            }
+            
+            renderPageSnake();
+        }
+        
+        function renderPageSnake() {
+            const bodyEl = document.getElementById('pageSnakeBody');
+            bodyEl.innerHTML = '';
+            
+            pageSnake.forEach((seg, i) => {
+                const el = document.createElement('div');
+                el.className = 'snake-segment';
+                
+                if (i === 0) {
+                    // 蛇头
+                    el.className += ' snake-head';
+                    el.style.width = (SEGMENT_SIZE + 4) + 'px';
+                    el.style.height = (SEGMENT_SIZE + 4) + 'px';
+                    el.style.left = (seg.x - 2) + 'px';
+                    el.style.top = (seg.y - 2) + 'px';
+                    
+                    // 舌头
+                    const tongue = document.createElement('div');
+                    tongue.className = 'snake-tongue';
+                    if (pageSnakeDirection.x === 1) {
+                        tongue.style.right = '-12px';
+                        tongue.style.top = '50%';
+                        tongue.style.transform = 'translateY(-50%)';
+                    } else if (pageSnakeDirection.x === -1) {
+                        tongue.style.left = '-12px';
+                        tongue.style.top = '50%';
+                        tongue.style.transform = 'translateY(-50%)';
+                    } else if (pageSnakeDirection.y === 1) {
+                        tongue.style.bottom = '-10px';
+                        tongue.style.left = '50%';
+                        tongue.style.transform = 'translateX(-50%) rotate(90deg)';
+                    } else {
+                        tongue.style.top = '-10px';
+                        tongue.style.left = '50%';
+                        tongue.style.transform = 'translateX(-50%) rotate(90deg)';
+                    }
+                    el.appendChild(tongue);
+                    
+                } else {
+                    // 蛇身 - 渐变大小
+                    const scale = 1 - (i / pageSnake.length) * 0.3;
+                    const size = (SEGMENT_SIZE - 4) * scale;
+                    const offset = (SEGMENT_SIZE - size) / 2;
+                    
+                    el.className += ' snake-body-segment';
+                    el.style.width = size + 'px';
+                    el.style.height = size + 'px';
+                    el.style.left = (seg.x + offset) + 'px';
+                    el.style.top = (seg.y + offset) + 'px';
+                    el.style.opacity = 1 - (i / pageSnake.length) * 0.2;
+                }
+                
+                bodyEl.appendChild(el);
+            });
+        }
+        
+        function endPageSnake() {
+            pageSnakeRunning = false;
+            if (pageSnakeAnimFrame) {
+                cancelAnimationFrame(pageSnakeAnimFrame);
+            }
+            
+            // 显示结束提示
+            const scoreEl = document.getElementById('pageSnakeLength');
+            if (scoreEl) {
+                scoreEl.parentElement.innerHTML = '🎉 长度 <span>' + pageSnake.length + '</span>';
+            }
+        }
+        
+        function stopPageSnake() {
+            pageSnakeRunning = false;
+            if (pageSnakeAnimFrame) {
+                cancelAnimationFrame(pageSnakeAnimFrame);
+            }
+            
+            const layer = document.getElementById('pageSnakeLayer');
+            layer.classList.remove('active');
+            
+            // 清空
+            document.getElementById('pageSnakeBody').innerHTML = '';
+            document.getElementById('pageSnakeFood').textContent = '';
         }
     </script>
 </body>
